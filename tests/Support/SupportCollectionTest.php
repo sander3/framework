@@ -2148,6 +2148,37 @@ class SupportCollectionTest extends TestCase
         $this->assertEquals(['taylor', 'dayle'], $data->all());
     }
 
+    public function testGetOrPut()
+    {
+        $data = new Collection(['name' => 'taylor', 'email' => 'foo']);
+
+        $this->assertEquals('taylor', $data->getOrPut('name', null));
+        $this->assertEquals('foo', $data->getOrPut('email', null));
+        $this->assertEquals('male', $data->getOrPut('gender', 'male'));
+
+        $this->assertEquals('taylor', $data->get('name'));
+        $this->assertEquals('foo', $data->get('email'));
+        $this->assertEquals('male', $data->get('gender'));
+
+        $data = new Collection(['name' => 'taylor', 'email' => 'foo']);
+
+        $this->assertEquals('taylor', $data->getOrPut('name', function () {
+            return null;
+        }));
+
+        $this->assertEquals('foo', $data->getOrPut('email', function () {
+            return null;
+        }));
+
+        $this->assertEquals('male', $data->getOrPut('gender', function () {
+            return 'male';
+        }));
+
+        $this->assertEquals('taylor', $data->get('name'));
+        $this->assertEquals('foo', $data->get('email'));
+        $this->assertEquals('male', $data->get('gender'));
+    }
+
     public function testPut()
     {
         $data = new Collection(['name' => 'taylor', 'email' => 'foo']);
@@ -2925,6 +2956,8 @@ class SupportCollectionTest extends TestCase
         $this->assertEquals(['b', 'f'], $data->nth(4, 1)->all());
         $this->assertEquals(['c'], $data->nth(4, 2)->all());
         $this->assertEquals(['d'], $data->nth(4, 3)->all());
+        $this->assertEquals(['c', 'e'], $data->nth(2, 2)->all());
+        $this->assertEquals(['c', 'd', 'e', 'f'], $data->nth(1, 2)->all());
     }
 
     /**
